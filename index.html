@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        try {
+          var targetObj = typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : null);
+          if (targetObj) {
+            var rawFetch = targetObj.fetch ? targetObj.fetch.bind(targetObj) : null;
+            Object.defineProperty(targetObj, 'fetch', {
+              configurable: true,
+              enumerable: true,
+              get: function() {
+                return rawFetch;
+              },
+              set: function(val) {
+                rawFetch = val;
+              }
+            });
+          }
+        } catch (e) {
+          try {
+            if (typeof Window !== 'undefined' && Window.prototype) {
+              var protoFetch = Window.prototype.fetch;
+              Object.defineProperty(Window.prototype, 'fetch', {
+                configurable: true,
+                enumerable: true,
+                get: function() {
+                  return protoFetch;
+                },
+                set: function(val) {
+                  protoFetch = val;
+                }
+              });
+            }
+          } catch (e2) {}
+        }
+      })();
+    </script>
+    <title>Marquez Adviser - Mentoria Executiva & Aceleração Empresarial</title>
+    <meta name="description" content="Plataforma de alta performance para aceleração empresarial, governança, mentoria executiva 1-on-1, agendamento online e portal exclusivo para líderes de mercado." />
+    <meta property="og:title" content="Marquez Adviser - Mentoria Executiva & Aceleração Empresarial" />
+    <meta property="og:description" content="Escale sua empresa com governança, lucratividade e liberdade operacional. Mentoria de negócios com Marquez Adviser." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-[#070d19] dark:text-slate-100 antialiased transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

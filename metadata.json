@@ -1,0 +1,6 @@
+{
+  "name": "Marquez Adviser - Mentoria Executiva & Aceleração Empresarial",
+  "description": "Plataforma de alta performance para aceleração empresarial, governança, mentoria executiva 1-on-1, agendamento online e portal exclusivo para líderes de mercado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

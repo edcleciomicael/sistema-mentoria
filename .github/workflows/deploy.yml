@@ -1,0 +1,59 @@
+name: Deploy Marquez Adviser - HostGator (Preview & Producao)
+
+on:
+  push:
+    branches:
+      - main     # Dispara deploy para Produção (www.marquezadviser.com)
+      - preview  # Dispara deploy para Homologação/Preview (preview.marquezadviser.com)
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Selecione o ambiente de deploy'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Repositorio
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependencias
+        run: npm install --legacy-peer-deps
+
+      - name: Compilar Projeto (Build de Producao)
+        run: npm run build
+
+      - name: Determinar Diretorio de Destino no Servidor (HostGator)
+        id: target
+        run: |
+          if [ "${{ inputs.target_env }}" = "preview" ] || [ "${{ github.ref }}" = "refs/heads/preview" ]; then
+            echo "FTP_DIR=${{ secrets.HOSTGATOR_FTP_DIR || './' }}" >> $GITHUB_OUTPUT
+            echo "ENV_NAME=Preview (preview.marquezadviser.com)" >> $GITHUB_OUTPUT
+          else
+            echo "FTP_DIR=${{ secrets.HOSTGATOR_FTP_DIR_PUBLIC || secrets.HOSTGATOR_FTP_DIR || './' }}" >> $GITHUB_OUTPUT
+            echo "ENV_NAME=Publico / Producao (marquezadviser.com)" >> $GITHUB_OUTPUT
+          fi
+
+      # Deploy via FTP/FTPS automatizado para a HostGator
+      - name: Sincronizar Arquivos via FTP para a HostGator
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTGATOR_FTP_SERVER }}
+          username: ${{ secrets.HOSTGATOR_FTP_USERNAME }}
+          password: ${{ secrets.HOSTGATOR_FTP_PASSWORD }}
+          port: ${{ secrets.HOSTGATOR_FTP_PORT || 21 }}
+          local-dir: dist/
+          server-dir: ${{ steps.target.outputs.FTP_DIR }}
+          dangerous-clean-slate: false
